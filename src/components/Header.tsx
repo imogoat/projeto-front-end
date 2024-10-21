@@ -1,7 +1,6 @@
 "use client";
 
 import Image from 'next/image';
-// import MenuIcon from '@mui/icons-material/Menu';
 
 import { useState } from 'react';
 
