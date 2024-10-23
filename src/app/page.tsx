@@ -1,7 +1,9 @@
+import CardArea from "@/components/CardArea"
+
 export default function Home(){
     return (
         <div>
-            <h1>Hello World!</h1>
+            <CardArea />
         </div>
     )
 }
