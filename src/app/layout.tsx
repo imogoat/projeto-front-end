@@ -1,6 +1,6 @@
 import "./global.css"
-import Header from "../components/Header"
-import Footer from "@/components/Footer"
+import Header from "../components/layout/Header"
+import Footer from "@/components/layout/Footer"
 
 export const metadata = {
   title: 'ImoGOAT',
@@ -21,8 +21,10 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Header />
-        <div className="min-h-[500px]">
-          {children}
+        <div className="m-auto min-h-[500px] sm:w-11/12 w-97p">
+          <div>
+            {children}
+          </div>
         </div>
         <Footer />
       </body>

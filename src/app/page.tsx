@@ -1,7 +1,33 @@
+import Image from 'next/image';
+
+import CardArea from "@/components/layout/homepage/CardArea"
+import PesquisaArea from '@/components/layout/homepage/PesquisaArea';
+
 export default function Home(){
     return (
-        <div>
-            <h1>Hello World!</h1>
+        <div className="relative">
+            <div className="z-0">
+                <Image 
+                    src="/img/fundo-home.png"
+                    alt="fundo-home"
+                    width={160} // Ajuste conforme necessário
+                    height={50} // Ajuste conforme necessário
+                    layout="responsive"
+                />
+            </div>
+            <div className="relative z-10 p-0 mt-[-25%] xt:mt-[-20%] sm:mt-[-15%] md:mt-[-20%] w-full">
+                <aside className=" w-full z-10 
+                text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold 
+                text-white font-sans text-shadow mx-8 my-5">
+                    Encontre facilmente <br /> onde ficar!
+                </aside>
+                <div className='my-5'>
+                    <PesquisaArea />
+                </div>
+                <div className='my-5'>
+                    <CardArea />
+                </div>
+            </div>
         </div>
     )
 }

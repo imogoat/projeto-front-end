@@ -71,7 +71,7 @@ const Header = () => {
             </div>
         </div>
         {isClick && (
-            <div className='md:hidden absolute w-full z-10' >
+            <div className='md:hidden absolute w-full z-20' >
                 <div className='bg-[--green-light] px-2 pt-2 pb-3 space-y-1 sm:px-3 '>
                     <ol className="flex flex-col items-center justify-center text-white font-bold space-x-3 
                         hover:[&>li]:text-[var(--green-black)] hover:[&>li]:cursor-pointer ">
