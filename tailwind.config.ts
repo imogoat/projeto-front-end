@@ -19,6 +19,15 @@ const config: Config = {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontFamily: {
+        sans: ['Ubuntu', 'sans-serif'],  // Garantindo que Ubuntu esteja incluído
+      },
+      boxShadow: {
+        custom: '0 8px 10px rgba(0, 0, 0, 0.75)'  // Adicionando sombra de texto personalizada
+      },
+      spacing: {
+        '350px': '350px'  // Adicionando um valor específico de espaçamento
+      },
     },
   },
   plugins: [],

@@ -27,4 +27,9 @@
     color: var(--cor-texto-principal);
     text-decoration: none;
   }
+
+
+  .text-shadow {
+    text-shadow: 0 8px 10px rgba(0, 0, 0, 0.75);
+  }
   
