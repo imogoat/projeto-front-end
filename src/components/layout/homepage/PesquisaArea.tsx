@@ -4,14 +4,15 @@ import Button from "./Button"
 const PesquisaArea = () => {
     return (
         <div className="flex items-center justify-center">
-            <div className=" w-[80%] h-auto bg-[--white] px-9 py-5 rounded-xl">
-                <div className="mb-6">
-                    <Button text="apartamento" flag='ap' />
-                    <Button text="casa" flag="cs" />
-                    <Button text="Quitinete" flag="qt" />
+            <div className="w-[97%] sm:w-[93%] md:w-[90%] lg:w-[85%] h-auto bg-[--white] 
+            px-2 md:px-8 py-2 md:py-5 rounded-md md:rounded-xl">
+                <div className="mb-6 xs:ml-2">
+                    <Button text="apartamento" />
+                    <Button text="casa" />
+                    <Button text="Quitinete" />
                 </div>
                 <div className="">
-                    <Input text="teste de testo (mudar)" />
+                    <Input text="Bairro de interesse" />
                 </div>
             </div>
         </div>
