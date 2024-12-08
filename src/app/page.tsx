@@ -2,6 +2,7 @@ import Image from 'next/image';
 
 import CardArea from "@/components/layout/homepage/CardArea"
 import PesquisaArea from '@/components/layout/homepage/PesquisaArea';
+import CardBairroArea from '@/components/layout/homepage/CardBairroArea';
 
 export default function Home(){
     return (
@@ -26,6 +27,9 @@ export default function Home(){
                 </div>
                 <div className='my-5'>
                     <CardArea />
+                </div>
+                <div>
+                    <CardBairroArea />
                 </div>
             </div>
         </div>
