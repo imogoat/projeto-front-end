@@ -9,19 +9,20 @@ const CardBairroArea = () => {
     const [showRightButton, setShowRightButton] = useState(true);
 
     useEffect(() => {
+        const container = scrollRef.current;  // Captura a referência atual para uso consistente
         const checkScrollButtons = () => {
-            if (scrollRef.current) {
-                const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+            if (container) {
+                const { scrollLeft, scrollWidth, clientWidth } = container;
                 setShowLeftButton(scrollLeft > 0);  // Se houver conteúdo à esquerda, mostrar botão esquerdo
                 setShowRightButton(scrollLeft < scrollWidth - clientWidth);  // Se houver conteúdo à direita, mostrar botão direito
             }
         };
 
         checkScrollButtons();  // Verificar na montagem
-        scrollRef.current?.addEventListener('scroll', checkScrollButtons);  // Adicionar ouvinte de evento de rolagem
+        container?.addEventListener('scroll', checkScrollButtons);  // Adicionar ouvinte de evento de rolagem
 
         return () => {
-            scrollRef.current?.removeEventListener('scroll', checkScrollButtons);  // Limpar ouvinte na desmontagem
+            container?.removeEventListener('scroll', checkScrollButtons);  // Limpar ouvinte na desmontagem
         };
     }, []);
 
@@ -33,33 +34,31 @@ const CardBairroArea = () => {
             const container = scrollRef.current;
             const items = Array.from(container.children as HTMLCollectionOf<HTMLElement>);
 
-            if (items.length > 0) {
-                let targetItem = null;
+            let targetItem = null;
 
-                if (direction === 'right') {
-                    const currentRightEdge = container.scrollLeft + container.clientWidth;
-                    for (let i = 0; i < items.length; i++) {
-                        if (items[i].offsetLeft + items[i].offsetWidth > currentRightEdge) {
-                            targetItem = items[i];
-                            break;
-                        }
-                    }
-                } else {
-                    const currentLeftEdge = container.scrollLeft;
-                    for (let i = items.length - 1; i >= 0; i--) {
-                        if (items[i].offsetLeft < currentLeftEdge) {
-                            targetItem = items[i];
-                            break;
-                        }
+            if (direction === 'right') {
+                const currentRightEdge = container.scrollLeft + container.clientWidth;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].offsetLeft + items[i].offsetWidth > currentRightEdge) {
+                        targetItem = items[i];
+                        break;
                     }
                 }
-
-                if (targetItem) {
-                    container.scrollTo({
-                        left: direction === 'right' ? targetItem.offsetLeft - container.offsetLeft : targetItem.offsetLeft - container.offsetLeft - container.clientWidth + targetItem.offsetWidth,
-                        behavior: 'smooth'
-                    });
+            } else {
+                const currentLeftEdge = container.scrollLeft;
+                for (let i = items.length - 1; i >= 0; i--) {
+                    if (items[i].offsetLeft < currentLeftEdge) {
+                        targetItem = items[i];
+                        break;
+                    }
                 }
+            }
+
+            if (targetItem) {
+                container.scrollTo({
+                    left: direction === 'right' ? targetItem.offsetLeft - container.offsetLeft : targetItem.offsetLeft - container.offsetLeft - container.clientWidth + targetItem.offsetWidth,
+                    behavior: 'smooth'
+                });
             }
         }
     };
