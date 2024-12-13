@@ -1,4 +1,6 @@
 import "./global.css"
+// import 'flowbite/dist/flowbite.css';
+
 import Header from "../components/layout/Header"
 import Footer from "@/components/layout/Footer"
 

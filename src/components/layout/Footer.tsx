@@ -4,7 +4,7 @@ import { faLinkedin, faInstagram } from '@fortawesome/free-brands-svg-icons';
 const Footer = () => {
     return (
         <>
-            <div className="flex flex-col items-center p-5 w-full h-auto bg-[--green-light] text-white">
+            <div className="flex flex-col items-center p-5 w-full h-auto bg-[--green-light] text-white mt-2">
                 <div className='cursor-pointer hover:text-[--green-black]'>
                     Sobre nós
                 </div>
