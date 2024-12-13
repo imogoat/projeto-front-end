@@ -16,7 +16,7 @@ export default function Home(){
                     layout="responsive"
                 />
             </div>
-            <div className="relative z-10 p-0 mt-[-35%] xt:mt-[-35%] sm:mt-[-30%] md:mt-[-25%] w-full">
+            <div className="relative z-10 p-0 mt-[-35%] xt:mt-[-35%] sm:mt-[-30%] md:mt-[-25%] w-full overflow-x-hidden">
                 <aside className=" w-full z-10 
                 text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold 
                 text-white font-sans text-shadow mx-8 my-5">
