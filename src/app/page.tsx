@@ -26,7 +26,7 @@ export default function Home(){
                     <PesquisaArea />
                 </div>
                 <div className='my-5'>
-                    <CardArea />
+                    <CardArea limit={5} />
                 </div>
                 <div>
                     <CardBairroArea />

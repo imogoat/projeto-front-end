@@ -5,7 +5,10 @@ import HomeIcon from "@mui/icons-material/Home"
 import { Favorite } from '@mui/icons-material';
 import { useState } from 'react';
 
-const Card = () => {
+import { CardProps } from '@/interfaces/propertyTypes';
+
+
+const Card: React.FC<CardProps> = ({ property }) => {
     const [isFavorited, setIsFavorited] = useState(false); // Estado para controlar se foi favoritado
 
     const toggleFavorite = () => {
@@ -14,19 +17,22 @@ const Card = () => {
 
     return (
         <>
-            <div className="xl:w-[310px] lg:w-[260px] md:w-[185px] sm:w-[250px] xt:w-[175px] xs:w-[160px] h-auto bg-[--white] rounded-xl">
-                <Image 
-                    src="/img/img-ap.png"
-                    alt="img-imovel"
-                    width={160} // Ajuste conforme necessário
-                    height={80} // Ajuste conforme necessário
-                    layout="responsive"
-                    className='cursor-pointer'
-                />
+            <div className="xl:w-[310px] lg:w-[260px] md:w-[200px] sm:w-[250px] xt:w-[175px] xs:w-[160px] h-auto bg-[--white] rounded-xl">
+                {property.images && property.images.length > 0 && (
+                    <div className='relative w-full h-24 sm:h-28  lg:h-40 overflow-hidden rounded-t-lg'>
+                        <Image 
+                            src={property.images[0].url}
+                            alt={property.name}
+                            layout="fill"
+                            objectFit="cover"
+                            className='cursor-pointer'
+                        />
+                    </div>
+                )}
                 <div className='h-auto mx-3'>
                     <div className='flex flex-row items-start justify-between'>
                         <h1 className='font-semibold sm:text-2xl xt:text-xl cursor-pointer'>
-                            Nome
+                            {property.name}
                         </h1>
                         <Favorite 
                             onClick={toggleFavorite} // Adicionando evento de clique
@@ -56,9 +62,11 @@ const Card = () => {
                             }}
                             className="mr-1"
                         />
-                        Tipo
+                        {property.type}
                     </p>
-                        
+                    {/* <div className="card-header"> */}
+                        {/* <span>Score: {property.score}</span>  Mostrando o score */}
+                    {/* </div> */}
                 </div>
             </div>
         </>
