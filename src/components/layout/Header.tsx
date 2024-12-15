@@ -3,9 +3,10 @@
 import Image from 'next/image';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 const Header = () => {
-
+    const router = useRouter();
     const [isClick, setisClick] = useState(false);
 
     const toggleNavbar = () : void =>{
@@ -16,7 +17,7 @@ const Header = () => {
         <>
         <div className="flex items-center py-auto w-full h-5 bg-[--green-light] justify-between p-10">
             <div className="flex items-center w-1/6 hover:cursor-pointer">
-                <div className="min-w-24 w-24 md:min-w-32 md:w-32 lg:min-w-40 lg:w-40">
+                <div className="min-w-24 w-24 md:min-w-32 md:w-32 lg:min-w-40 lg:w-40" onClick={() => {router.push("/")}}>
                     <Image
                         src="/img/logo-branca-01.png"
                         alt="logo"
