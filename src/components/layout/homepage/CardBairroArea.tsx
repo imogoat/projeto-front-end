@@ -80,6 +80,9 @@ const CardBairroArea = () => {
 
     return (
         <div className="relative w-full sm:[90%] md:w-4/5 overflow-hidden py-4 mx-auto">
+            <h3 className='font-bold text-base sm:text-xl mb-3'>
+                Explore opções de imóveis nos melhores locais
+            </h3>
             <style>
             {`
                 .scrollbar-hide::-webkit-scrollbar {

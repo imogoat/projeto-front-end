@@ -11,7 +11,7 @@ export interface Proprietary {
     updatedAt: string;
 }
 
-export interface Image {
+export interface ImageProps {
     id: number;
     url: string;
     immobileId: number;
@@ -33,7 +33,7 @@ export interface Property {
     description: string;
     proprietaryId: number;
     proprietary: Proprietary;
-    images: Image[];
+    images: ImageProps[];
 }
 
 export interface ScoredProperty extends Property {
