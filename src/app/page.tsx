@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import CardArea from "@/components/layout/homepage/CardArea"
+import CardArea from "@/components/layout/CardArea"
 import PesquisaArea from '@/components/layout/homepage/PesquisaArea';
 import CardBairroArea from '@/components/layout/homepage/CardBairroArea';
 
