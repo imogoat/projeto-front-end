@@ -23,10 +23,8 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Header />
-        <div className="m-auto min-h-[500px] sm:w-11/12 w-97p">
-          <div>
+        <div className="m-auto min-h-screen sm:w-11/12 w-97p">
             {children}
-          </div>
         </div>
         <Footer />
       </body>

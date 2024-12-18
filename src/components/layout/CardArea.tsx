@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 
-import Card from "./Card"; // Certifique-se de que o caminho para o Card está correto
-import apiClient from "@/api/apiClient"; // Certifique-se de que o caminho para apiClient está correto
+import Card from "./Card";
+import CardLoadingSkeleton from "./CardLoadingSkeleton";
+
+import apiClient from "@/api/apiClient";
 
 import { ScoredProperty } from "@/interfaces/propertyTypes"; // Usando a interface estendida
 import { calculateScore } from "@/utils/calculateScore";
@@ -15,19 +17,19 @@ interface CardAreaProps {
 
 const CardArea: React.FC<CardAreaProps> = ({ limit, properties }) => {
   const [imoveis, setImoveis] = useState<ScoredProperty[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchImoveis = async () => {
       if (properties) {
-        // Se propriedades forem passadas, use-as diretamente
         const scoredProperties = properties.map((imovel) => ({
           ...imovel,
           score: calculateScore(imovel),
         }));
         scoredProperties.sort((a, b) => b.score - a.score);
         setImoveis(limit ? scoredProperties.slice(0, limit) : scoredProperties);
+        setLoading(false);
       } else {
-        // Caso contrário, busque os imóveis da API
         try {
           const response = await apiClient.get("/immobile");
           const data: ScoredProperty[] = response.data;
@@ -37,14 +39,29 @@ const CardArea: React.FC<CardAreaProps> = ({ limit, properties }) => {
           }));
           scoredImoveis.sort((a, b) => b.score - a.score);
           setImoveis(limit ? scoredImoveis.slice(0, limit) : scoredImoveis);
+          setLoading(false);
         } catch (error) {
           console.error("Failed to fetch imoveis:", error);
+          setLoading(false);
         }
       }
     };
 
     fetchImoveis();
   }, [properties, limit]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center w-full px-2 md:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {/* Renderizando skeletons durante o carregamento */}
+          {Array.from({ length: 6 }).map((_, index) => (
+            <CardLoadingSkeleton key={index} />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-center w-full px-2 md:px-8">

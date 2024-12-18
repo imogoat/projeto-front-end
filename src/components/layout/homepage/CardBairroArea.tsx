@@ -2,27 +2,51 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import CardBairro from "./CardBairro";
+import CardBairroLoadingSkeleton from "./CardBairroLoadingSkeleton";
 
 const CardBairroArea = () => {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [showLeftButton, setShowLeftButton] = useState(false);
     const [showRightButton, setShowRightButton] = useState(true);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [cards, setCards] = useState<{ img: string; bairro: string; city: string }[]>([]);
 
     useEffect(() => {
-        const container = scrollRef.current;  // Captura a referência atual para uso consistente
+        const container = scrollRef.current;
+
         const checkScrollButtons = () => {
             if (container) {
                 const { scrollLeft, scrollWidth, clientWidth } = container;
-                setShowLeftButton(scrollLeft > 0);  // Se houver conteúdo à esquerda, mostrar botão esquerdo
-                setShowRightButton(scrollLeft < scrollWidth - clientWidth);  // Se houver conteúdo à direita, mostrar botão direito
+                setShowLeftButton(scrollLeft > 0);
+                setShowRightButton(scrollLeft < scrollWidth - clientWidth);
             }
         };
 
-        checkScrollButtons();  // Verificar na montagem
-        container?.addEventListener('scroll', checkScrollButtons);  // Adicionar ouvinte de evento de rolagem
+        if (container) {
+            container.addEventListener('scroll', checkScrollButtons);
+        }
+
+        // Simulando carregamento (substitua com uma chamada de API real)
+        setTimeout(() => {
+            setCards([
+                { img: "/img/img-ap.png", bairro: "Junco", city: "Picos" },
+                { img: "/img/img-ap.png", bairro: "Centro", city: "Picos" },
+                { img: "/img/img-ap.png", bairro: "Boa Vista", city: "Picos" },
+                { img: "/img/img-ap.png", bairro: "Junco", city: "Picos" },
+                { img: "/img/img-ap.png", bairro: "Centro", city: "Picos" },
+                { img: "/img/img-ap.png", bairro: "Boa Vista", city: "Picos" },
+                { img: "/img/img-ap.png", bairro: "Junco", city: "Picos" },
+                { img: "/img/img-ap.png", bairro: "Centro", city: "Picos" },
+                { img: "/img/img-ap.png", bairro: "Boa Vista", city: "Picos" },
+                { img: "/img/img-ap.png", bairro: "Junco", city: "Picos" },
+                { img: "/img/img-ap.png", bairro: "Centro", city: "Picos" },
+                { img: "/img/img-ap.png", bairro: "Boa Vista", city: "Picos" },
+            ]);
+            setLoading(false);
+        }, 2000); // Simula 2 segundos de carregamento
 
         return () => {
-            container?.removeEventListener('scroll', checkScrollButtons);  // Limpar ouvinte na desmontagem
+            container?.removeEventListener('scroll', checkScrollButtons);
         };
     }, []);
 
@@ -56,35 +80,23 @@ const CardBairroArea = () => {
 
             if (targetItem) {
                 container.scrollTo({
-                    left: direction === 'right' ? targetItem.offsetLeft - container.offsetLeft : targetItem.offsetLeft - container.offsetLeft - container.clientWidth + targetItem.offsetWidth,
-                    behavior: 'smooth'
+                    left:
+                        direction === 'right'
+                            ? targetItem.offsetLeft - container.offsetLeft
+                            : targetItem.offsetLeft - container.offsetLeft - container.clientWidth + targetItem.offsetWidth,
+                    behavior: 'smooth',
                 });
             }
         }
     };
 
-    const cards = [
-        { img: "/img/img-ap.png", bairro: "Junco", city: "Picos", nomeSecundario: "Junco Norte" },
-        { img: "/img/img-ap.png", bairro: "Centro", city: "Picos", nomeSecundario: "Centro Sul" },
-        { img: "/img/img-ap.png", bairro: "Boa Vista", city: "Picos", nomeSecundario: "Vista Leste" },
-        { img: "/img/img-ap.png", bairro: "Junco", city: "Picos", nomeSecundario: "Junco Norte" },
-        { img: "/img/img-ap.png", bairro: "Centro", city: "Picos", nomeSecundario: "Centro Sul" },
-        { img: "/img/img-ap.png", bairro: "Boa Vista", city: "Picos", nomeSecundario: "Vista Leste" },
-        { img: "/img/img-ap.png", bairro: "Junco", city: "Picos", nomeSecundario: "Junco Norte" },
-        { img: "/img/img-ap.png", bairro: "Centro", city: "Picos", nomeSecundario: "Centro Sul" },
-        { img: "/img/img-ap.png", bairro: "Boa Vista", city: "Picos", nomeSecundario: "Vista Leste" },
-        { img: "/img/img-ap.png", bairro: "Junco", city: "Picos", nomeSecundario: "Junco Norte" },
-        { img: "/img/img-ap.png", bairro: "Centro", city: "Picos", nomeSecundario: "Centro Sul" },
-        { img: "/img/img-ap.png", bairro: "Boa Vista", city: "Picos", nomeSecundario: "Vista Leste" },
-    ]; // seus cards aqui
-
     return (
         <div className="relative w-full sm:[90%] md:w-4/5 overflow-hidden py-4 mx-auto">
-            <h3 className='font-bold text-base sm:text-xl mb-3'>
+            <h3 className="font-bold text-base sm:text-xl mb-3">
                 Explore opções de imóveis nos melhores locais
             </h3>
             <style>
-            {`
+                {`
                 .scrollbar-hide::-webkit-scrollbar {
                     display: none;
                 }
@@ -104,11 +116,17 @@ const CardBairroArea = () => {
                 </button>
             )}
             <div ref={scrollRef} className="flex flex-nowrap space-x-4 overflow-x-auto px-4 scrollbar-hide">
-                {cards.map((card, index) => (
-                    <div key={index} className="min-w-max">
-                        <CardBairro img={card.img} bairro={card.bairro} city={card.city} />
-                    </div>
-                ))}
+                {loading
+                    ? Array.from({ length: 6 }).map((_, index) => (
+                          <div key={index} className="min-w-max">
+                              <CardBairroLoadingSkeleton />
+                          </div>
+                      ))
+                    : cards.map((card, index) => (
+                          <div key={index} className="min-w-max">
+                              <CardBairro img={card.img} bairro={card.bairro} city={card.city} />
+                          </div>
+                      ))}
             </div>
             {showRightButton && (
                 <button

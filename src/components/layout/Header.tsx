@@ -78,7 +78,7 @@ const Header = () => {
                         hover:[&>li]:text-[var(--green-black)] hover:[&>li]:cursor-pointer ">
                         <li>Anuncie aqui</li>
                         <li>Favoritos</li>
-                        <li>Contato</li>
+                        <li onClick={() => {router.push("/contato")}}>Contato</li>
                         <li>Fazer Login</li>
                     </ol>
                 </div>
