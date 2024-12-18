@@ -32,7 +32,7 @@ const Header = () => {
                 hover:[&>li]:text-[var(--green-black)] hover:cursor-pointer">
                 <li>Anuncie aqui</li>
                 <li>Favoritos</li>
-                <li>Contato</li>
+                <li onClick={() => {router.push("/contato")}}>Contato</li>
                 <li>Fazer Login</li>
             </ol>
             {/* Ícone de menu para dispositivos móveis */}
