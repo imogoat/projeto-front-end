@@ -8,6 +8,9 @@ import { Property } from '@/interfaces/propertyTypes';
 
 import ImageFundo from '@/components/layout/imageFundo';
 import Galery from '@/components/layout/imovelPage/galery';
+import MenuImovel from '@/components/layout/imovelPage/MenuImovel';
+import VisaoGeral from '@/components/layout/imovelPage/VisaoGeral';
+import Informacoes from '@/components/layout/imovelPage/Informacoes';
 
 import LoadingSpinner from '@/components/layout/LoadingSpinner';
 
@@ -62,7 +65,11 @@ const ImovelPage: React.FC<ImovelPageProps> = ({ params }) => {
                 </aside>
                 <Galery images={imovel?.images || []} />
             </div>
-            <p>{JSON.stringify(imovel, null, 2)}</p>
+            <MenuImovel />
+            <hr className="border-t border-gray-300 w-full my-2" />
+            <VisaoGeral imovel={imovel!} />
+            <Informacoes imovel={imovel!} />
+            {/* <p>{JSON.stringify(imovel, null, 2)}</p> */}
         </div>
     );
 };
