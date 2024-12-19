@@ -33,6 +33,7 @@ export interface Property {
     description: string;
     proprietaryId: number;
     proprietary: Proprietary;
+    feedbacks: number[];
     images: ImageProps[];
 }
 
