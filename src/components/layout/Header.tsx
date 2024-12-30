@@ -30,7 +30,7 @@ const Header = () => {
             {/* Menu para desktop */}
             <ol className="hidden md:flex text-white font-bold space-x-3 
                 hover:[&>li]:text-[var(--green-black)] hover:cursor-pointer">
-                <li>Anuncie aqui</li>
+                <li onClick={() => {router.push("/anuncio")}}>Anuncie aqui</li>
                 <li>Favoritos</li>
                 <li onClick={() => {router.push("/contato")}}>Contato</li>
                 <li>Fazer Login</li>
