@@ -1,12 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
-
+import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 
 import ButtonAnuncio from "@/components/layout/anuncioPage/button";
 
 const AnuncioPage = () => {
-    const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   // Detecta o tamanho da tela apenas no cliente
   useEffect(() => {
@@ -22,6 +24,12 @@ const AnuncioPage = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+
+  // Função para redirecionar ao clicar no botão
+  const handleImovelClick = () => {
+    router.push(`${pathname}/cadastro`);
+  };
     
   return (
     <div className="flex flex-col md:flex-row gap-8 min-h-screen items-center py-8">
@@ -61,7 +69,7 @@ const AnuncioPage = () => {
           </h2>
 
           <div className="flex flex-wrap justify-center md:justify-between lg:px-16 xl:px-28 gap-4 items-stretch">
-            <ButtonAnuncio icon="apartment" type="Imóvel" text="Se você é proprietário" />
+            <ButtonAnuncio icon="apartment" type="Imóvel" text="Se você é proprietário" onClick={handleImovelClick} />
             <ButtonAnuncio icon="safety_divider" type="Vaga" text="Se deseja dividir contas" />
           </div>
         </div>
