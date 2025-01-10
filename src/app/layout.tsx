@@ -1,6 +1,8 @@
 import "./global.css"
 // import 'flowbite/dist/flowbite.css';
 
+import { AuthProvider } from "@/context/AuthContext";
+
 import Header from "../components/layout/Header"
 import Footer from "@/components/layout/Footer"
 
@@ -22,11 +24,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Header />
-        <div className="m-auto min-h-screen sm:w-11/12 w-97p">
-            {children}
-        </div>
-        <Footer />
+        <AuthProvider>
+          <Header />
+          <div className="m-auto min-h-screen sm:w-11/12 w-97p">
+              {children}
+          </div>
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   )
