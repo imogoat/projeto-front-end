@@ -7,6 +7,7 @@ interface FormData {
   tipo: string;
   quartos: number;
   banheiros: number;
+  garagem: boolean;
   metragem: number;
 }
 
@@ -18,9 +19,14 @@ interface InformacoesBasicasProps {
 const InformacoesBasicas: React.FC<InformacoesBasicasProps> = ({ formData, updateBasicInfo }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    const parsedValue = name === "quartos" || name === "banheiros" || name === "metragem"
-      ? parseFloat(value) || 0
-      : value;
+    let parsedValue;
+    if (name === "quartos" || name === "banheiros" || name === "metragem") {
+      parsedValue = parseFloat(value) || 0;
+    } else if (name === "garagem") {
+      parsedValue = value === "true";
+    } else {
+      parsedValue = value;
+    }
     updateBasicInfo({ [name]: parsedValue });
   };
 
@@ -84,6 +90,33 @@ const InformacoesBasicas: React.FC<InformacoesBasicasProps> = ({ formData, updat
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded-lg"
         />
+      </div>
+
+      <div>
+        <h3 className="font-bold mb-4 flex items-center gap-2">
+          Acesso a Garagem?
+        </h3>
+        <div className="grid gap-2 mx-3">
+          {[
+            { label: "Sim", value: "true" },
+            { label: "não", value: "false" }
+          ].map((option) => (
+            <div key={option.label} className="flex items-center gap-2">
+              <input
+                type="radio"
+                id={`garagem-${option.label}`}
+                name="garagem"
+                value={option.value}
+                checked={formData.garagem.toString() === option.value}
+                onChange={e => handleChange(e)}
+                className="cursor-pointer"
+              />
+              <label htmlFor={`garagem-${option.label}`} className="cursor-pointer capitalize">
+                {option.label}
+              </label>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div>

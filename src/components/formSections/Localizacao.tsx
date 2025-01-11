@@ -18,8 +18,9 @@ interface LocalizacaoProps {
 }
 
 const Localizacao: React.FC<LocalizacaoProps> = ({ formData, updateLocalizacao }) => {
-  const handleChange = (key: string, value: string) => {
-    updateLocalizacao({ [key]: value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    updateLocalizacao({ [name]: value }); // Apenas atualiza o estado
   };
 
   return (
@@ -32,10 +33,11 @@ const Localizacao: React.FC<LocalizacaoProps> = ({ formData, updateLocalizacao }
         </label>
         <input
           id="pais"
+          name="pais"
           type="text"
           placeholder="Digite o país"
           value={formData.pais || ""}
-          onChange={(e) => handleChange("pais", e.target.value)}
+          onChange={(e) => handleChange(e)} // Atualiza apenas os dados
           className="w-full px-4 py-2 border rounded-lg"
         />
       </div>
@@ -46,10 +48,11 @@ const Localizacao: React.FC<LocalizacaoProps> = ({ formData, updateLocalizacao }
         </label>
         <input
           id="estado"
+          name="estado"
           type="text"
           placeholder="Digite o estado"
           value={formData.estado || ""}
-          onChange={(e) => handleChange("estado", e.target.value)}
+          onChange={handleChange}
           className="w-full px-4 py-2 border rounded-lg"
         />
       </div>
@@ -60,10 +63,11 @@ const Localizacao: React.FC<LocalizacaoProps> = ({ formData, updateLocalizacao }
         </label>
         <input
           id="cidade"
+          name="cidade"
           type="text"
           placeholder="Digite a cidade"
           value={formData.cidade || ""}
-          onChange={(e) => handleChange("cidade", e.target.value)}
+          onChange={handleChange}
           className="w-full px-4 py-2 border rounded-lg"
         />
       </div>
@@ -74,10 +78,11 @@ const Localizacao: React.FC<LocalizacaoProps> = ({ formData, updateLocalizacao }
         </label>
         <input
           id="bairro"
+          name="bairro"
           type="text"
           placeholder="Digite o bairro"
           value={formData.bairro || ""}
-          onChange={(e) => handleChange("bairro", e.target.value)}
+          onChange={handleChange}
           className="w-full px-4 py-2 border rounded-lg"
         />
       </div>
@@ -88,10 +93,11 @@ const Localizacao: React.FC<LocalizacaoProps> = ({ formData, updateLocalizacao }
         </label>
         <input
           id="rua"
+          name="rua"
           type="text"
           placeholder="Digite a rua"
           value={formData.rua || ""}
-          onChange={(e) => handleChange("rua", e.target.value)}
+          onChange={handleChange}
           className="w-full px-4 py-2 border rounded-lg"
         />
       </div>
@@ -102,10 +108,11 @@ const Localizacao: React.FC<LocalizacaoProps> = ({ formData, updateLocalizacao }
         </label>
         <input
           id="numero"
+          name="numero"
           type="text"
           placeholder="Digite o número"
           value={formData.numero || ""}
-          onChange={(e) => handleChange("numero", e.target.value)}
+          onChange={handleChange}
           className="w-full px-4 py-2 border rounded-lg"
         />
       </div>
@@ -116,10 +123,11 @@ const Localizacao: React.FC<LocalizacaoProps> = ({ formData, updateLocalizacao }
         </label>
         <input
           id="complemento"
+          name="complemento"
           type="text"
           placeholder="Digite o complemento"
           value={formData.complemento || ""}
-          onChange={(e) => handleChange("complemento", e.target.value)}
+          onChange={handleChange}
           className="w-full px-4 py-2 border rounded-lg"
         />
       </div>

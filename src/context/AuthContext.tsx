@@ -3,8 +3,16 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { loginUser, getUser } from "@/api/userServices";
 
+interface User {
+  id: number;
+  username: string;
+  email: string;
+  number: string;
+  role: string;
+}
+
 interface AuthContextProps {
-  user: { id: number; username: string; email: string; number: string; role: string } | null;
+  user: User | null;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -13,22 +21,22 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<AuthContextProps["user"] | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  // Salva os dados no localStorage
-  const persistUser = (user: AuthContextProps["user"], token: string) => {
+  // Função para salvar os dados do usuário e token no localStorage
+  const persistUser = (user: User, token: string) => {
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("authToken", token);
   };
 
-  // Remove os dados do localStorage
+  // Função para limpar os dados do usuário e token do localStorage
   const clearUser = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("authToken");
   };
 
-  // Carrega os dados do localStorage ao inicializar
+  // Carrega os dados do usuário e token do localStorage ao inicializar
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const storedToken = localStorage.getItem("authToken");
@@ -39,10 +47,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
+  // Função de login
   const login = async (email: string, password: string) => {
     try {
-      // Faz o login e pega o ID e o token
+      // Chama o serviço de login para obter o token e ID do usuário
       const loginResponse = await loginUser(email, password);
+
+      // Obtém os detalhes completos do usuário com o ID retornado
       const userData = await getUser(loginResponse.id);
 
       const user = {
@@ -55,6 +66,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       setUser(user);
       setToken(loginResponse.token);
+
+      // Salva no localStorage
       persistUser(user, loginResponse.token);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -64,6 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Função de logout
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -77,6 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
+// Hook para acessar o contexto de autenticação
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

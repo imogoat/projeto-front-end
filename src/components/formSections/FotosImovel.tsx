@@ -33,6 +33,7 @@ const FotosImovel: React.FC<FotosImovelProps> = ({ initialData, updateImages }) 
       </label>
       <input
         id="imagens"
+        name="imagens"
         type="file"
         multiple
         accept="image/*"
