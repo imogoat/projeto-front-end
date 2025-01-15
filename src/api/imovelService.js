@@ -115,7 +115,6 @@ export const criarImovel = async (payload, token) => {
 
 
 // Função para fazer upload das imagens
-// Função para fazer upload das imagens
 export const adicionarImagens = async (imovelId, imagens, token) => {
     try {
       const formData = new FormData();
