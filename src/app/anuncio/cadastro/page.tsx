@@ -13,6 +13,9 @@ import Acessibilidade from "@/components/formSections/Acessibilidade";
 import PoliticasReservas from "@/components/formSections/PoliticasReservas";
 import Localizacao from "@/components/formSections/Localizacao";
 import ValidacaoFinal from "@/components/formSections/ValidacaoFinal";
+import ProgressBar from "@/components/formSections/ProgressBar";
+
+import { validarCampos } from "@/utils/formHelpers";
 
 import { criarImovel, adicionarImagens } from "@/api/imovelService"; // Função para enviar o formulário
 import { useAuth } from "@/context/AuthContext";
@@ -20,52 +23,12 @@ import { useAuth } from "@/context/AuthContext";
 import apiClient from "@/api/apiClient";
 import { getLastCreatedImmobileId } from "@/api/imovelService";
 
+import { FormData } from "@/interfaces/propertyForm";
 
-interface FormData {
-  nome: string;
-  tipo: string;
-  quartos: number;
-  banheiros: number;
-  garagem: boolean;
-  metragem: number;
-  imagens: File[];
-  descricao: string;
-  maxHospedes: number;
-  permiteFestas: boolean;
-  aceitaAnimais: boolean;
-  permiteFumar: boolean;
-  outrasRegras: string;
-  status: string;
-  valor: number;
-  frequenciaPagamento: string;
-  tarifaLimpeza: number;
-  outrasTarifas: string;
-  nomeProprietario: string;
-  contato: string;
-  cpfCnpj: string;
-  regulacoesLocais: string;
-  acessibilidade: string[];
-  politicaCancelamento: string;
-  pais: string;
-  estado: string;
-  cidade: string;
-  bairro: string;
-  rua: string;
-  numero: string;
-  complemento: string;
-  depositoSeguranca: string;
-  valorDeposito: number;
-  taxaAnimal: string;
-  taxaAnimalValor: number;
-  politicaFumantes: string;
-  politicaFestas: string;
-  taxaFestas: string;
-  outrasPoliticas: string;
-}
 
 const CadastroImovel = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const { user, token } = useAuth();
+  const { user, token, isAuthLoaded } = useAuth();
 
   const [formData, setFormData] = useState<FormData>({
     nome: "",
@@ -122,22 +85,11 @@ const CadastroImovel = () => {
     { etapa: number; mensagem: string }[]
   >([]);
 
-  const camposObrigatoriosPorEtapa = {
-    1: ["nome", "tipo", "quartos", "banheiros", "metragem"],
-    2: ["imagens"],
-    3: ["pais", "estado", "cidade", "bairro", "rua", "numero"],
-    4: ["descricao"],
-    6: ["valor"],
-    7: [],
-    8: [],
-    9: [],
-    10: [],
-    11: [],
-  };
+  
 
   const nextStep = () => {
     if (currentStep === totalSteps - 2) {
-      validarCampos();
+      handleValidacao();
     } else if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     }
@@ -147,33 +99,15 @@ const CadastroImovel = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
-  const validarCampos = () => {
-    const etapasFaltantes: { etapa: number; mensagem: string }[] = [];
-
-    Object.entries(camposObrigatoriosPorEtapa).forEach(([etapa, campos]) => {
-      const etapaTemErro = campos.some((campo) => {
-        if (campo === "imagens") {
-          // Verifica o comprimento da lista de imagens
-          return formData.imagens.length === 0;
-        }
-        return !formData[campo as keyof typeof formData];
-      });
-
-      if (etapaTemErro) {
-        etapasFaltantes.push({
-          etapa: parseInt(etapa, 10),
-          mensagem: `Preencha os campos obrigatórios da etapa ${etapa}.`,
-        });
-      }
-    });
-
-    setCamposInvalidos(etapasFaltantes);
-
-    if (etapasFaltantes.length === 0) {
-      setCurrentStep(totalSteps); // Vai para o step de validação final
+  const handleValidacao = () => {
+    const camposInvalidos = validarCampos(formData);
+  
+    if (camposInvalidos.length > 0) {
+      setCamposInvalidos(camposInvalidos);
+      setCurrentStep(totalSteps - 1); // Vai para o passo de validação
     } else {
-      setCurrentStep(totalSteps - 1);
-      console.log("Dados completos:", formData);
+      setCamposInvalidos([]);
+      setCurrentStep(totalSteps); // Prossegue normalmente
     }
   };
 
@@ -182,17 +116,31 @@ const CadastroImovel = () => {
   };
 
   const handleEnviarFormulario = async () => {
+    if (!isAuthLoaded) {
+      console.warn("Dados de autenticação ainda não carregados.");
+      return;
+    }
+  
+    if (!user || !token) {
+      alert("Usuário não autenticado. Faça login novamente.");
+      return;
+    }
+  
     setIsSubmitting(true);
   
     try {
-      // Verifica e atualiza o role do usuário para "owner", se necessário
+      console.log("Iniciando o envio do formulário...");
+      console.log("Usuário atual:", user?.username, "ID:", user?.id);
+      console.log("Token:", token);
+  
+      // Etapa 1: Atualizar o role do usuário para "owner", se necessário
       if (user?.role !== "owner") {
         console.log("Atualizando o usuário para 'owner'...");
         await apiClient.put(`/alter-user/${user?.id}`, { role: "owner" });
         console.log("Usuário atualizado para 'owner'.");
       }
   
-      // Preparar os dados do payload para criar o imóvel
+      // Etapa 2: Preparar o payload para criar o imóvel
       const payload = {
         name: formData.nome,
         number: formData.numero,
@@ -206,43 +154,48 @@ const CadastroImovel = () => {
         numberOfBathrooms: formData.banheiros,
         garagem: formData.garagem,
         description: formData.descricao,
-        proprietaryId: user?.id, 
+        proprietaryId: user?.id,
       };
-
+  
+      console.log("Payload preparado para o imóvel:", payload);
+  
+      // Etapa 3: Verificar se as imagens são válidas
       const arquivosValidos = formData.imagens.every((imagem) => {
         const extensao = imagem.name.split(".").pop()?.toLowerCase();
         return ["jpg", "jpeg", "png", "gif"].includes(extensao || "");
       });
-      
+  
       if (!arquivosValidos) {
         throw new Error("Arquivos inválidos. Somente imagens são permitidas.");
-      } else {
-        // Etapa 1: Criar o imóvel
-        const response = await criarImovel(payload, token);
-        let currentId = response?.id;
-      
-        if (!currentId) {
-          console.warn("API não retornou o ID do imóvel. Buscando o último ID criado...");
-          currentId = await getLastCreatedImmobileId();
-          if (!currentId) {
-            throw new Error("Não foi possível obter o ID do imóvel criado.");
-          }
-          console.log("Último ID obtido:", currentId);
-        } else {
-          console.log("ID retornado pela API:", currentId);
-        }
-      
-        // Adiciona imagens ao imóvel
-        if (formData.imagens.length > 0 && currentId) {
-          console.log("Usando ID para adicionar imagens: ", currentId);
-          await adicionarImagens(currentId, formData.imagens, token);
-        }
-      
-    
-        // Atualiza o estado para sucesso
-        setSubmissionSuccess(true);
-        setCurrentStep(totalSteps + 1); // Passa para o step final de confirmação
       }
+  
+      // Etapa 4: Criar o imóvel
+      let currentId;
+      const response = await criarImovel(payload, token);
+  
+      if (response?.id) {
+        currentId = response.id;
+        console.log("ID retornado pela API:", currentId);
+      } else {
+        console.warn("API não retornou o ID do imóvel. Buscando o último ID criado...");
+        currentId = await getLastCreatedImmobileId();
+        if (!currentId) {
+          throw new Error("Não foi possível obter o ID do imóvel criado.");
+        }
+        console.log("Último ID obtido:", currentId);
+      }
+  
+      // Etapa 5: Adicionar imagens ao imóvel
+      if (formData.imagens.length > 0 && currentId) {
+        console.log("Adicionando imagens ao imóvel com ID:", currentId);
+        await adicionarImagens(currentId, formData.imagens, token);
+        console.log("Imagens adicionadas com sucesso.");
+      }
+  
+      // Etapa 6: Atualizar estado para sucesso
+      setSubmissionSuccess(true);
+      setCurrentStep(totalSteps + 1); // Passa para o step final de confirmação
+      console.log("Cadastro concluído com sucesso!");
   
     } catch (error) {
       console.error("Erro ao enviar o formulário:", error);
@@ -252,11 +205,14 @@ const CadastroImovel = () => {
     }
   };
   
-  
+
   
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Cadastro de Imóveis</h1>
+
+      {/* Barras de progresso */}
+      <ProgressBar setStep={setCurrentStep} formData={formData} />
 
       <div className="bg-white p-6 rounded-lg shadow-lg">
         {currentStep === 1 && (

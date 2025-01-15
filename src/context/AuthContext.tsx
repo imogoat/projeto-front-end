@@ -14,6 +14,7 @@ interface User {
 interface AuthContextProps {
   user: User | null;
   token: string | null;
+  isAuthLoaded: boolean; // Indica se os dados do contexto foram carregados
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
@@ -23,37 +24,31 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [isAuthLoaded, setIsAuthLoaded] = useState(false); // Novo estado
 
-  // Função para salvar os dados do usuário e token no localStorage
   const persistUser = (user: User, token: string) => {
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("authToken", token);
   };
 
-  // Função para limpar os dados do usuário e token do localStorage
   const clearUser = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("authToken");
   };
 
-  // Carrega os dados do usuário e token do localStorage ao inicializar
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     const storedToken = localStorage.getItem("authToken");
 
-    if (storedUser && storedToken) {
-      setUser(JSON.parse(storedUser));
-      setToken(storedToken);
-    }
+    if (storedUser) setUser(JSON.parse(storedUser));
+    if (storedToken) setToken(storedToken);
+
+    setIsAuthLoaded(true); // Confirma que os dados foram carregados
   }, []);
 
-  // Função de login
   const login = async (email: string, password: string) => {
     try {
-      // Chama o serviço de login para obter o token e ID do usuário
       const loginResponse = await loginUser(email, password);
-
-      // Obtém os detalhes completos do usuário com o ID retornado
       const userData = await getUser(loginResponse.id);
 
       const user = {
@@ -66,8 +61,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       setUser(user);
       setToken(loginResponse.token);
-
-      // Salva no localStorage
       persistUser(user, loginResponse.token);
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -77,7 +70,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Função de logout
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -85,13 +77,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, isAuthLoaded, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Hook para acessar o contexto de autenticação
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
