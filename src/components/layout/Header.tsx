@@ -39,7 +39,7 @@ const Header = () => {
                 hover:[&>li]:text-[var(--green-black)] hover:cursor-pointer"
         >
           <li onClick={() => router.push("/anuncio")}>Anuncie aqui</li>
-          <li>Favoritos</li>
+          <li onClick={() => router.push("/favorites")}>Favoritos</li>
           <li onClick={() => router.push("/contato")}>Contato</li>
           {user ? (
             <li onClick={logout}>Olá, {user.username.trim().split(/\s+/)[0].charAt(0).toUpperCase() + user.username.trim().split(/\s+/)[0].slice(1).toLowerCase()}!</li>
@@ -86,7 +86,7 @@ const Header = () => {
                         hover:[&>li]:text-[var(--green-black)] hover:[&>li]:cursor-pointer "
             >
               <li onClick={() => router.push("/anuncio")}>Anuncie aqui</li>
-              <li>Favoritos</li>
+              <li onClick={() => router.push("/favorites")}>Favoritos</li>
               <li onClick={() => router.push("/contato")}>Contato</li>
               {user ? (
                 <li onClick={logout}>Olá, {user.username.trim().split(/\s+/)[0].charAt(0).toUpperCase() + user.username.trim().split(/\s+/)[0].slice(1).toLowerCase()}!</li>
