@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 import Card from "./Card";
 import CardLoadingSkeleton from "./CardLoadingSkeleton";
 
 import apiClient from "@/api/apiClient";
-
-import { ScoredProperty } from "@/interfaces/propertyTypes"; // Usando a interface estendida
+import { getFavorites } from "@/api/favoriteServices";
+import { ScoredProperty } from "@/interfaces/propertyTypes";
 import { calculateScore } from "@/utils/calculateScore";
 
 interface CardAreaProps {
@@ -17,38 +18,60 @@ interface CardAreaProps {
 
 const CardArea: React.FC<CardAreaProps> = ({ limit, properties }) => {
   const [imoveis, setImoveis] = useState<ScoredProperty[]>([]);
+  const [favorites, setFavorites] = useState<number[]>([]); // IDs dos imóveis favoritos
+  const [favoriteMapping, setFavoriteMapping] = useState<{ [key: number]: number }>({});
   const [loading, setLoading] = useState<boolean>(true);
+  const { user, token } = useAuth();
 
   useEffect(() => {
     const fetchImoveis = async () => {
-      if (properties) {
-        const scoredProperties = properties.map((imovel) => ({
-          ...imovel,
-          score: calculateScore(imovel),
-        }));
-        scoredProperties.sort((a, b) => b.score - a.score);
-        setImoveis(limit ? scoredProperties.slice(0, limit) : scoredProperties);
-        setLoading(false);
-      } else {
-        try {
-          const response = await apiClient.get("/immobile");
-          const data: ScoredProperty[] = response.data;
-          const scoredImoveis = data.map((imovel) => ({
+      try {
+        setLoading(true);
+
+        let fetchedProperties: ScoredProperty[];
+
+        if (properties) {
+          // Se os imóveis forem passados, calcula o score e ordena
+          fetchedProperties = properties.map((imovel) => ({
             ...imovel,
             score: calculateScore(imovel),
           }));
-          scoredImoveis.sort((a, b) => b.score - a.score);
-          setImoveis(limit ? scoredImoveis.slice(0, limit) : scoredImoveis);
-          setLoading(false);
-        } catch (error) {
-          console.error("Failed to fetch imoveis:", error);
-          setLoading(false);
+          fetchedProperties.sort((a, b) => b.score - a.score);
+        } else {
+          // Caso contrário, busca os imóveis da API, calcula o score e ordena
+          const response = await apiClient.get("/immobile");
+          const data: ScoredProperty[] = response.data;
+          fetchedProperties = data.map((imovel) => ({
+            ...imovel,
+            score: calculateScore(imovel),
+          }));
+          fetchedProperties.sort((a, b) => b.score - a.score);
         }
+
+        setImoveis(limit ? fetchedProperties.slice(0, limit) : fetchedProperties);
+
+        // Verifica favoritos do usuário
+        if (user?.id && token) {
+          const favoritesResponse = await getFavorites(user.id, token);
+          const favoriteIds = favoritesResponse.map((favorite) => favorite.immobileId);
+          const mapping = favoritesResponse.reduce((acc, favorite) => {
+            acc[favorite.immobileId] = favorite.id;
+            return acc;
+          }, {} as { [key: number]: number });
+
+          setFavorites(favoriteIds);
+          setFavoriteMapping(mapping);
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Erro ao carregar imóveis ou favoritos:", error);
+        setLoading(false);
       }
     };
 
     fetchImoveis();
-  }, [properties, limit]);
+  }, [properties, limit, user?.id, token]);
 
   if (loading) {
     return (
@@ -67,7 +90,12 @@ const CardArea: React.FC<CardAreaProps> = ({ limit, properties }) => {
     <div className="flex justify-center w-full px-2 md:px-8">
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {imoveis.map((imovel) => (
-          <Card key={imovel.id} property={imovel} /> // Renderiza um Card para cada imóvel
+          <Card
+            key={imovel.id}
+            property={imovel}
+            isFavorited={favorites.includes(imovel.id)} // Verifica se é favorito
+            favoriteIdMapping={favoriteMapping} // Passa o mapeamento de IDs favoritos
+          />
         ))}
         <div className="xl:w-[310px] lg:w-[260px] md:w-[185px] sm:w-[250px] xt:w-[175px] xs:w-[160px] h-auto bg-gray-500 rounded-xl">
           Anúncio
