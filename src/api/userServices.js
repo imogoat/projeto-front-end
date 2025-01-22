@@ -24,3 +24,25 @@ export const getUser = async (id) => {
         throw new Error(error.response?.data?.message || "Erro ao buscar dados do usuário");
     }
 }
+
+
+export const createUser = async ({ username, email, password, number, role = "user" }) => {
+    try {
+      const response = await apiClient.post("/create-user", {
+        username,
+        email,
+        password,
+        number,
+        role,
+      });
+      return response.data; // Retorna a mensagem da API
+    } catch (error) {
+      console.error(
+        "Erro ao criar usuário:",
+        error.response?.data || error.message
+      );
+      throw new Error(
+        error.response?.data?.message || "Erro ao criar usuário"
+      );
+    }
+  };
