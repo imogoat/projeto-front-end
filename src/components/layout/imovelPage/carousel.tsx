@@ -5,9 +5,10 @@ import Image from "next/image";
 
 interface CarouselProps {
   images: { url: string }[];
+  onFullScreenChange: (isFullScreen: boolean) => void;
 }
 
-const Carousel: React.FC<CarouselProps> = ({ images }) => {
+const Carousel: React.FC<CarouselProps> = ({ images, onFullScreenChange }) => {
   const [currentIndex, setCurrentIndex] = useState(1); // Índice da imagem atual
   const [isFullScreen, setIsFullScreen] = useState(false); // Controle da tela cheia
   const [zoom, setZoom] = useState(1); // Nível de zoom
@@ -28,11 +29,13 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
 
   const openFullScreenGallery = () => {
     setIsFullScreen(true);
+    onFullScreenChange(true);
   };
 
   const closeFullScreenGallery = () => {
     setIsFullScreen(false);
     resetZoomAndOffset();
+    onFullScreenChange(false);
   };
 
   const resetZoomAndOffset = () => {

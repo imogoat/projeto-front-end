@@ -6,9 +6,10 @@ import Carousel from "./carousel";
 
 interface ImagesProps {
     images: ImageProps[],
+    onFullScreenChange: (isFullScreen: boolean) => void;
 }
 
-const Galery: React.FC<ImagesProps> = ({ images }) => {
+const Galery: React.FC<ImagesProps> = ({ images, onFullScreenChange }) => {
     const router = useRouter();
 
     const sharePage = async () => {
@@ -61,7 +62,7 @@ const Galery: React.FC<ImagesProps> = ({ images }) => {
 
             
 
-            <Carousel images={images} />
+            <Carousel images={images} onFullScreenChange={onFullScreenChange} />
 
         </div>
     )
